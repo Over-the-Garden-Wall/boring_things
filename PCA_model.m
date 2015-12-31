@@ -1,4 +1,8 @@
-function reward = PCA_model(data, max_components, test_proportion)
+function reward = PCA_model(data, max_components, test_proportion, threshold)
+
+    if ~exist('threshold','var')
+        threshold = 0;
+    end
 
     data(isnan(data)) = 0;
 
@@ -20,6 +24,7 @@ function reward = PCA_model(data, max_components, test_proportion)
         pc_fit = pcs_up_to_now \ data_up_to_now';
         
         predicted_ret = pcs(t,:) * pc_fit;
+        predicted_ret(abs(predicted_ret)<threshold) = 0;
         
         %policy: buy a unit if positive, sell a unit if negative
         reward(:,t) = sign(predicted_ret').*data(test_samples,t);
