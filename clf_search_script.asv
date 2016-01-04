@@ -1,0 +1,15 @@
+%clf_search_script
+t = 36;
+clf_types = unique(data.clf);
+
+num_sims = 50;
+
+results = zeros(100, length(clf_types));
+
+for c = 1:length(clf_types)
+
+    m = default_model('RF');
+    
+    results(:,t) = test_model_validity(m, data.resid_ret(data.clf == clf_types(c),1:t-1), data.resid_ret(:,t), .75, 100);
+    
+end

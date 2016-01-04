@@ -26,9 +26,11 @@ function evt_data = read_and_clean_data_for_evt(time_range)
     evt_data.resid_ret = zeros(num_events, num_t);
     for n = 1:num_events
         evt_data.ret(n,:) = raw_data.ret(evt_r(n), evt_c(n) + time_range);
-        evt_data.resid_ret(n,:) = raw_data.resid_ret(evt_r(n), evt_c(n) + time_range);
+        evt_data.resid_ret(n,:) = raw_data.resid_ret(evt_r(n), evt_c(n) + time_range);        
     end
     
+    evt_data.ret(isnan(evt_data.ret)) = 0;
+    evt_data.resid_ret(isnan(evt_data.ret)) = 0;    
 end
         
     
