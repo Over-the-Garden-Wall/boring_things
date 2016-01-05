@@ -5,12 +5,11 @@ base_m = [];
 % base_m{1} = default_model('nearest neighbors');
 base_m{1} = default_model('logistic regression');
 % base_m{1} = default_model('RF');
-example_m = cell(length(base_m), length(t_range));
 
 held_out_ratio = .75;
-num_sims = 2;
-t_range = -10:25;
-results = zeros(num_sims, length(t_range));
+num_resamples = 100;
+% t_range = 0;
+results = zeros(num_resamples, length(base_m));
 
 for m_num = 1:length(base_m)
 
@@ -22,7 +21,7 @@ for m_num = 1:length(base_m)
 
         tic
     %     results(:,t) = test_model_validity(m, data.resid_ret(:,1:tn-1), data.resid_ret(:,tn), .8, num_sims);
-        [results(:,t), dummy, example_m{m_num, t}] = test_model_validity(m, data.ret(:,1:tn-1), data.ret(:,tn), held_out_ratio, num_sims);
+        [results(:,t), dummy, example_m] = test_model_validity(m, data.ret(:,1:tn-1), data.ret(:,tn), held_out_ratio, num_sims);
         toc
         
         
