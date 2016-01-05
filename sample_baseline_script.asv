@@ -1,15 +1,15 @@
 %time searching script
 
+base_m = [];
 % base_m = cell(3,1);
 % base_m{1} = default_model('nearest neighbors');
-base_m{2} = default_model('logistic regression');
-base_m{3} = default_model('RF');
-
+base_m{1} = default_model('logistic regression');
+% base_m{1} = default_model('RF');
 
 held_out_ratio = .75;
-num_sims = 25;
-t_range = -5:25;
-results = zeros(num_sims, length(t_range));
+num_resamples = 100;
+% t_range = 0;
+results = zeros(num_resamples, length(base_m));
 
 for m_num = 1:length(base_m)
 
@@ -21,8 +21,10 @@ for m_num = 1:length(base_m)
 
         tic
     %     results(:,t) = test_model_validity(m, data.resid_ret(:,1:tn-1), data.resid_ret(:,tn), .8, num_sims);
-        results(:,t) = test_model_validity(m, data.ret(:,1:tn-1), data.ret(:,tn), held_out_ratio, num_sims);
+        [results(:,t), dummy, example_m] = test_model_validity(m, data.ret(:,1:tn-1), data.ret(:,tn), held_out_ratio, num_sims);
         toc
+        
+        
     end
 
     figure; hold all;
@@ -36,4 +38,6 @@ for m_num = 1:length(base_m)
     plot(t_range, .5*ones(size(t_range)), ':k');
 
     title(m.model_name);
+    
+    
 end

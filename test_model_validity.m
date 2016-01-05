@@ -24,6 +24,8 @@ function [inference_accuracy, fit_accuracy, m] = test_model_validity(m, samples,
         for_training = rand_list(1:ceil(num_total_samples * proportion4training));
         training_input = samples(for_training,:);
         training_label = sign(labels(for_training,:));
+        training_input(training_label(:,1) == 0,:) = [];
+        training_label(training_label(:,1) == 0,:) = [];
 
         m = base_m;
         m = m.fit_fxn(m, training_input, training_label);
