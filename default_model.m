@@ -11,12 +11,15 @@ function m = default_model(model_name)
         m.f = @(x) (tanh(x));
         m.df = @(y) (1 - y.^2);
                 
-        m.Ef = @(y, t) ((y-t).^2);
-        m.dEf = @(y, t) (2.*(y-t));    
+%         m.Ef = @(y, t) ((y-t).^2);
+%         m.dEf = @(y, t) (2.*(y-t)); 
+        m.Ef = @(y, t) (max( abs(t - y) - .5, 0)); %hinge loss at .5
+        m.dEf = @(y, t) ( double(abs(t-y) > .5) );
         
         m.minibatch_size = 20;
         
-        m.fit_fxn = @fit_NN;
+%         m.fit_fxn = @fit_NN;
+        m.fit_fxn = @fit_NN_logit_init;
         m.infer_fxn = @run_NN;        
     elseif strcmp(model_name, 'nearest neighbors')
         m.fit_fxn = @fit_nearest_neighbors;

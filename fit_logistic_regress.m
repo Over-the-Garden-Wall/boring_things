@@ -7,21 +7,20 @@ function m = fit_logistic_regress(m, data, labels)
     
     data = data(is_valid, :);
     
-    interaction_data = zeros(size(data,1), ...
-        size(data,2) * m.interaction_distance); %will be a couple extra entries
-    k = 0;
-    for d = 1:size(data,2)
-        for dd = 1:m.interaction_distance
-            if d + dd <= size(data,2)
+    if m.interaction_distance ~= 0
+        interaction_data = zeros(size(data)); 
+
+        k = 0;
+        for d = 1:size(data,2)
+            if d + m.interaction_distance <= size(data,2)
                 k = k+1;
                 interaction_data(:,k) = ...
-                    data(:,d) .* data(:, d + dd);
+                    data(:,d) .* data(:, d + m.interaction_distance);
             end
         end
+        data = [data interaction_data(:,1:k)];
     end
-    interaction_data(:,k+1:end) = [];
-       
     
-    [m.B, m.dev, m.stats] = mnrfit([data interaction_data], labels);
+    [m.B, m.dev, m.stats] = mnrfit(data, labels);
     
 end

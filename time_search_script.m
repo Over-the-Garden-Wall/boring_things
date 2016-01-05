@@ -1,14 +1,16 @@
 %time searching script
 
-base_m = cell(3,1);
-base_m{1} = default_model('nearest_neighbors');
-base_m{2} = default_model('logistic regression');
-base_m{3} = default_model('RF');
+base_m = cell(4,1);
+for k = 1:length(base_m)
+    base_m{k} = default_model('logistic regression');
+    base_m{k}.interaction_distance = k;
+    base_m{k}.model_name = ['logreg Dt = ' num2str(k)];
+end
 
 
 held_out_ratio = .75;
 num_sims = 25;
-t_range = -5:25;
+t_range = -10:25;
 results = zeros(num_sims, length(t_range));
 
 for m_num = 1:length(base_m)

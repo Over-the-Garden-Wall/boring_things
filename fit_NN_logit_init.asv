@@ -1,0 +1,22 @@
+function m = fit_NN_logit_init(m, data, labels)
+
+    logit_m = default_model('logistic regression');
+    logit_m = logit_m.fit_fxn(logit_m, data, labels);
+    
+    logit_W_size = mean(abs(logit_m.B));
+    
+    m.layer_size = [0 8 8 0];
+    
+    %make W small relative to logit weights
+    m.W{1} = randn(size(data,2), m.layer_size(2)) * logit_W_size / 10; 
+    m.W{1,:} = logit_m.B(2:end)'; %insert logit model
+    
+    m.B{1} = randn(1, m.layer_size(2)) * logit_W_size / 10;
+    m.B{1}(1) = logit_m.B(1
+    
+    m.W{2} = randn(m.layer_size(2), size(labels,2)) / 10;
+    m.W{2}(1,:) = 1;
+    
+    m = fit_NN(m, data, labels);
+    
+end
