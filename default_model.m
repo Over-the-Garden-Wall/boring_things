@@ -18,12 +18,14 @@ function m = default_model(model_name)
         
         m.minibatch_size = 20;
         
+        m.momentum = .9;
+        
 %         m.fit_fxn = @fit_NN;
         m.fit_fxn = @fit_NN;
         m.infer_fxn = @run_NN;        
     elseif strcmp(model_name, 'NN logitinit')
         m = default_model('NN');
-        m.layer_size(2) = 12;
+        m.layer_size(2) = 4;
         m.learning_rate = .00001;
         m.minibatch_size = 3000;
         m.num_iterations = 1000;

@@ -20,6 +20,11 @@ function m = fit_NN(m, training_samples, labels)
     Y = cell(m.num_layers+1,1);
     dEdW = cell(m.num_layers+1,1);
     dEdB = cell(m.num_layers+1,1);
+    for l = 1:m.num_layers+1;
+        dEdW{l} = zeros(size(m.W{l}));
+        dEdB{l} = zeros(m.minibatch_size, size(m.B{l}, 2));
+    end
+    
     
     for t = 1:m.num_iterations
         
@@ -40,11 +45,14 @@ function m = fit_NN(m, training_samples, labels)
         %backward pass
         dEdB{end} = m.df(Y{end}).*m.dEf(Y{end}, training_labels(samples_picked, :));
         for l = m.num_layers+1:-1:1
-            dEdW{l} = Y{l}' * dEdB{l};
+            dEdW{l} = Y{l}' * dEdB{l} + m.momentum * dEdW{l};
             if l > 1
-                dEdB{l-1} = m.df(Y{l}) .* (dEdB{l} * m.W{l}');
+                dEdB{l-1} = m.df(Y{l}) .* (dEdB{l} * m.W{l}') + m.momentum * dEdB{l-1};
             end
         end
+        
+        
+        
         
         %gradient pass
         for l = 1:m.num_layers+1
