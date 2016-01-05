@@ -22,7 +22,11 @@ function m = fit_NN(m, training_samples, labels)
     dEdB = cell(m.num_layers+1,1);
     
     for t = 1:m.num_iterations
-        samples_picked = ceil(rand(m.minibatch_size,1) * size(training_samples,1));
+        
+        %picking without replacement to allow for batch training
+        sample_list = randperm(size(training_samples,1));
+        samples_picked = sample_list(1:m.minibatch_size);
+        
         
         
         %forward pass
