@@ -1,4 +1,4 @@
-function response_functions = extract_variable_response_RF(m, data, labels, num_forests, p_per_forest, p_in_fxn)
+function [response_functions, fxn_x, fxn_y] = extract_variable_response_RF(m, data, labels, num_forests, p_per_forest, p_in_fxn)
     
     dependence = cell(num_forests, size(data,2));
     response_functions = cell(size(data,2),1);
@@ -9,12 +9,12 @@ function response_functions = extract_variable_response_RF(m, data, labels, num_
     end
     
     for x = 1:size(data,2)
-        response_functions{x} = combine_dependences(dependence(:,x), p_in_fxn);
+        [response_functions{x}, fxn_x{x}, fxn_y{x}] = combine_dependences(dependence(:,x), p_in_fxn);
     end
     
 end
 
-function comb_f = combine_dependences(xy_cell, p_in_fxn)
+function [comb_f, fxn_x, fxn_y] = combine_dependences(xy_cell, p_in_fxn)
 
     individual_f = cell(length(xy_cell),1);
     min_x = Inf;
@@ -36,7 +36,9 @@ function comb_f = combine_dependences(xy_cell, p_in_fxn)
         fxn_y = individual_f{n}(fxn_x)/length(xy_cell) + fxn_y;
     end
     
-    comb_f = @(x) (interp1([-Inf, fxn_x, Inf], fxn_y([1 1:end end]), x));
+    fxn_x = [-Inf, fxn_x, Inf];
+    fxn_y = fxn_y([1 1:end end]);
+    comb_f = @(x, fxn_x, fxn_y) (interp1(fxn_x, fxn_y, x));
     
 end
     

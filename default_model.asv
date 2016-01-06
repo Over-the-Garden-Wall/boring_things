@@ -38,11 +38,18 @@ function m = default_model(model_name)
         m.ntree = 2000;
         
         m.fit_fxn = @fit_RF;
-        m.infer_fxn = @run_RF;                
+        m.infer_fxn = @run_RF;
+    elseif strcmp(model_name, 'RF nonlins')
+        m.ntree = 500;
+        m.forests_per_nlin = 10;
+        m.fxn_res = 200;
+        m.search_res = 20;
+        
+        n.fit_fxn = @fit_RFnonlins;
+        n.infer_fxn = @run_RFnonlins;
+        
     elseif strcmp(model_name, 'logistic regression')        
         m.interaction_distance = 0;
-        
-        m.whiten_data = false;
         
         m.fit_fxn = @fit_logistic_regress;
         m.infer_fxn = @run_logistic_regress;        
