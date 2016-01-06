@@ -1,41 +1,43 @@
 %time searching script
 
-base_m = cell(4,1);
-for k = 1:length(base_m)
+base_m = [];
+for k = 1:5
     base_m{k} = default_model('logistic regression');
-    base_m{k}.interaction_distance = k;
-    base_m{k}.model_name = ['logreg Dt = ' num2str(k)];
+    base_m{k}.interaction_distance = k-1;
+    base_m{k}.model_name = ['logreg_t' num2str(k-1)];
 end
+base_m{end+1} = default_model('nearest neighbors');
+base_m{end+1} = default_model('RF');
+
 
 
 held_out_ratio = .75;
-num_sims = 25;
-t_range = -10:25;
-results = zeros(num_sims, length(t_range));
+num_sims = 20;
+t_range = -10:20;
+v_length = 25;
+inference_accuracy = zeros(num_sims, length(t_range));
+fit_accuracy = zeros(num_sims, length(t_range));
+fit_models = cell(num_sims, length(t_range));
+
 
 for m_num = 1:length(base_m)
 
     for t = 1:length(t_range);
 
-        tn = t_range(t) + 26;
-
         m = base_m{m_num};
 
         tic
-    %     results(:,t) = test_model_validity(m, data.resid_ret(:,1:tn-1), data.resid_ret(:,tn), .8, num_sims);
-        results(:,t) = test_model_validity(m, data.ret(:,1:tn-1), data.ret(:,tn), held_out_ratio, num_sims);
+        [inference_accuracy(:,t), fit_accuracy(:,t), fit_models(:,t)] ...
+            = test_model_validity(m, data.ret(:,t + (0:v_length-1)), data.ret(:,t+v_length), held_out_ratio, num_sims);
         toc
+        
+        %trees are big
+        if strcmp(base_m{m_num}.model_name, 'RF')
+            for k = 1:size(fit_models,1)
+                fit_models{k,t}.forest = fit_models{k,t}.forest.importance;
+            end
+        end
     end
 
-    figure; hold all;
-
-    res_mean = mean(results);
-    res_std = std(results);
-
-    h = area(t_range, [res_mean' - 2*res_std', 4*res_std']);
-    delete(h(1));
-    plot(t_range, res_mean, 'k', 'lineWidth', 2);
-    plot(t_range, .5*ones(size(t_range)), ':k');
-
-    title(m.model_name);
+    save(['../data/time_search_' base_m{m_num}.model_name '.mat'], 'inference_accuracy', 'fit_accuracy', 'fit_models');
 end

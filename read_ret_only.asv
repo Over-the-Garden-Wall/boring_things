@@ -1,0 +1,9 @@
+function ret = read_ret_only(v_length)
+
+    data = read_hdf5_into_struct('./data.h5');
+    data.ret(all(isnan(data.ret),2),:) = [];
+    
+    data.ret(isnan(data.ret)) = 0;
+    
+    ret = zeros(size(data.ret,1) * (size(data.ret,2) - v_length), v_length + 1);
+    

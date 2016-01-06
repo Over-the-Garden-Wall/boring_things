@@ -1,7 +1,7 @@
-function [inference_accuracy, fit_accuracy, m] = test_model_validity(m, samples, labels, proportion4training, num_sims)
+function [inference_accuracy, fit_accuracy, m] = test_model_validity(base_m, samples, labels, proportion4training, num_sims)
 
     if ~exist('num_sims','var')
-        num_sims = 0;
+        num_sims = 1;
     end
 
     is_invalid = any(isnan(labels),2);
@@ -14,7 +14,7 @@ function [inference_accuracy, fit_accuracy, m] = test_model_validity(m, samples,
     inference_accuracy = zeros(num_sims,1);
     fit_accuracy = zeros(num_sims,1);
     
-    base_m = m;
+	m = cell(num_sims,1);
     
     
     for t = 1:num_sims
@@ -27,8 +27,8 @@ function [inference_accuracy, fit_accuracy, m] = test_model_validity(m, samples,
         training_input(training_label(:,1) == 0,:) = [];
         training_label(training_label(:,1) == 0,:) = [];
 
-        m = base_m;
-        m = m.fit_fxn(m, training_input, training_label);
+        m{t} = base_m;
+        m{t} = m{t}.fit_fxn(m{t}, training_input, training_label);
 
         for_testing = rand_list(1 + ceil(num_total_samples * proportion4training) : end);
         test_input = samples(for_testing,:);
@@ -38,12 +38,12 @@ function [inference_accuracy, fit_accuracy, m] = test_model_validity(m, samples,
         test_label(test_label(:,1) == 0,:) = [];
 
 
-        prediction = m.infer_fxn(m, training_input);
+        prediction = m{t}.infer_fxn(m{t}, training_input);
         fit_accuracy(t) = sum(prediction==training_label & prediction~= 0) / ...
             sum(prediction~= 0);
 
 
-        prediction = m.infer_fxn(m, test_input);
+        prediction = m{t}.infer_fxn(m{t}, test_input);
         inference_accuracy(t) = sum(prediction==test_label) / ...
             size(test_label,1); 
     
