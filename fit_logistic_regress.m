@@ -7,6 +7,7 @@ function m = fit_logistic_regress(m, data, labels)
     
     data = data(is_valid, :);
     
+    
     if m.interaction_distance ~= 0
         interaction_data = zeros(size(data)); 
 

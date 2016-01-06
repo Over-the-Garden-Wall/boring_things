@@ -56,8 +56,8 @@ function m = fit_NN(m, training_samples, labels)
         
         %gradient pass
         for l = 1:m.num_layers+1
-            m.W{l} = m.W{l} - dEdW{l} * m.learning_rate;
-            m.B{l} = m.B{l} - sum(dEdB{l},1) * m.learning_rate;
+            m.W{l} = m.W{l} - dEdW{l} * m.learning_rate / m.minibatch_size;
+            m.B{l} = m.B{l} - sum(dEdB{l},1) * m.learning_rate / m.minibatch_size;
         end
         
     end

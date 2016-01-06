@@ -8,7 +8,7 @@ function m = fit_NN_logit_init(m, data, labels)
     
     m.num_layers = 1;
     m.layer_size = [0 m.layer_size(2) 0];
-    m.minibatch_size = size(data,1);
+    %m.minibatch_size = size(data,1);
     
     %make W small relative to logit weights
     m.W{1} = zeros(size(data,2), m.layer_size(2)); 
