@@ -88,20 +88,92 @@ blah blah
 Introduction
 \end_layout
 
+\begin_layout Standard
+This report represents a cursory investigation of the effect of unspecified
+ events on the market behavior of a number of securities.
+ I focus exclusively on the effect of these events on adjusted daily returns,
+ since this is the variable of primary interest in the development of a
+ possible trading strategy surrounding these events.
+\end_layout
+
 \begin_layout Subsection*
 Dataset
 \end_layout
 
 \begin_layout Standard
-The dataset consists of blah
+The dataset consists of time-series data for 3397 securities over 250 days,
+ sampled once per day.
+ The time series included for each item are their average daily volume traded,
+ market cap, and adjusted daily returns.
+ Also included is a classification of the securities into 11 unique groups,
+ as well as the timing of unspecified events, which are of primary interest
+ to this report.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Standard
+The dataset contains a significant number of NaNs, which are assumed to
+ be the result of incomplete or failed collection.
+ 841 of the 3397 securities contain time series consisting entirely of NaNs,
+ and are excluded from any futher analysis.
+\end_layout
+
+\begin_layout Subsubsection*
 Events
 \end_layout
 
 \begin_layout Standard
-Events are indicated by blah
+Events are indicated by 0s in the /evt array, while other information is
+ otherwise unknown to me.
+ Included also is the indication that the events may be anticipated 20 days
+ in advance, and that the organizer of the data anticipates the influence
+ of the events to extend 20 days beyond their occurance.
+ There are 4778 unique events in the dataset.
+ 
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename evt_mean_std.eps
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Mean and Standard Deviation of returns surrounding event onset.
+ The x-axis indicates time in days relative to an event onset, which occurs
+ at time 0.
+ In computing these curves, outliers with values deviating more than 5 times
+ the overall standard deviation of 
+\begin_inset Formula $.0257$
+\end_inset
+
+ are excluded.
+ While the mean signal is approximately 0, there is a large increase in
+ volatility associated with event onset.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Figure 1 shows a summary of the behavior of returns surrounding the events.
+ At time 0, the returns clearly become much more volatile, suggesting that
+ a significant portion the market is responding to the event as it occurs,
+ rather than anticipating it as the data suggests is possible.
+ I thus predict that any exploitable signal is most likely to occur just
+ prior to event onset.
 \end_layout
 
 \begin_layout Subsection*
@@ -109,7 +181,42 @@ Preprocessing
 \end_layout
 
 \begin_layout Standard
-Data is blah
+For this report, I choose to consider only models that take inputs of fixed
+ size for reasons outlined in the Analysis section.
+ As such, the data can be preprocessed in a straightforward manner.
+ 
+\end_layout
+
+\begin_layout Standard
+A region of interest of 
+\begin_inset Formula $t=[-20,\;10]$
+\end_inset
+
+ was chosen around each event.
+ These times were chosen because they seemed reasonably likely to contain
+ usable signals given the gross behavior of the returns mentioned above.
+ For each time t surrounding each event, a data vector and label is extracted.
+ In cases where two events are close together, this means input-label pairs
+ are duplicated, but since they occur at different 
+\begin_inset Formula $t$
+\end_inset
+
+ relative to their respective events, they are never fit in the same model.
+ 
+\end_layout
+
+\begin_layout Standard
+Labels are defined as +1 or -1, depending on whether the return value is
+ positive or negative.
+ Instances in which return is NaN or 0 are removed from the dataset.
+ An input vector length of 25 was chosen, taken directly from the 25 datapoints
+ prior the label.
+ 
+\end_layout
+
+\begin_layout Standard
+NaN values in input vectors are set to 0 for convenience, so that models
+ need not be designed with the burden of ignoring NaNs taken into account.
 \end_layout
 
 \begin_layout Section*
@@ -121,7 +228,72 @@ Approach
 \end_layout
 
 \begin_layout Standard
-I approach this analysis as blah
+I approach this dataset with the plan to first explore basic models and
+ build up to more sophisticated models based on any observed patterns.
+\end_layout
+
+\begin_layout Subsubsection*
+Binary Classification
+\end_layout
+
+\begin_layout Standard
+I've chosen to treat the data as a binary classification problem for several
+ reasons.
+ Firstly, there's a straightforward policy associated with the binary prediction.
+ If the security is predicted to have a positive return, you buy.
+ Otherwise, you sell.
+ This policy is risk-indifferent, which should be appropriate if the maximum
+ amount of capital able to be deployed in exploiting the signal is very
+ small relative to the total capital available to the investor.
+ Whether or not that is reasonable is information unavailable to me, though
+ I would expect that Cubist would not be entirely risk-indifferent.
+\end_layout
+
+\begin_layout Standard
+Binary classification is also able to be addressed by a much larger set
+ of models.
+ The models I use these analyses, however, can all be used for regression,
+ which may be a viable future direction.
+\end_layout
+
+\begin_layout Subsubsection*
+t-Specific Models
+\end_layout
+
+\begin_layout Standard
+The typical approach to time series analysis is to view the data as translationa
+lly invariant, or position indifferent.
+ That is, the absolute time at which a datapoint arises is irrelevant, what
+ matters is the relative time of that datum within the time series.
+ Because the time series in the processed dataset are fixed to specific
+ times around the events, however, their absolute position is critically
+ relevant.
+ The best model to predict the return at time 
+\begin_inset Formula $t=1$
+\end_inset
+
+, for instance, may do very poorly at 
+\begin_inset Formula $t=-1$
+\end_inset
+
+, since the patterns in the data preceding those times may be completely
+ different.
+ As such, I build
+\end_layout
+
+\begin_layout Subsubsection*
+Fixed-length Input
+\end_layout
+
+\begin_layout Standard
+The motivation for this choice is that, at 
+\begin_inset Formula $t<5$
+\end_inset
+
+ it provides a full field of view for all the points during which the event
+ could be anticipated with some additional context prior, without being
+ so long as to make model fitting overly burdensome.
+ 
 \end_layout
 
 \begin_layout Subsection*
