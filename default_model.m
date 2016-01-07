@@ -37,11 +37,13 @@ function m = default_model(model_name)
     elseif strcmp(model_name, 'RF')
         m.ntree = 2000;
         
+        m.max_samples_per_forest = 4000;
+        
         m.fit_fxn = @fit_RF;
         m.infer_fxn = @run_RF;
     elseif strcmp(model_name, 'RF nonlins')
         m.ntree = 1000;
-        m.forests_per_nonlin = 4;
+        m.forests_per_nonlin = 1;
         m.fxn_res = 100;
         m.search_res = 40;
         

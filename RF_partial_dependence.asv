@@ -6,8 +6,8 @@ function dependence = RF_partial_dependence(m, data, num_points)
         tic
         
         x = sort(data(:,d));
-        minval = x(ceil(.05*length(x)));       
-        maxval = x(floor(.95*length(x)));       
+        minval = x(ceil(;       
+        maxval = max(data(:,d));       
         
         x_vals = minval : (maxval-minval)/(num_points-1) : maxval;
         
@@ -24,11 +24,6 @@ function dependence = RF_partial_dependence(m, data, num_points)
         end
         
         disp(['dimension ' num2str(d) ' analyzed in ' num2str(toc) ' seconds.']);
-        if all(dependence{d}(:,2) == dependence{d}(1,2))
-            disp(['dimension is degenerate with value ' num2str(dependence{d}(1,2))]);
-            dependence{d} = [0, dependence{d}(1,2)];
-        end
-        
     end
 end
 
