@@ -1,11 +1,11 @@
 
 base_m = [];
-for k = 1:5
-    base_m{k} = default_model('logistic regression');
-    base_m{k}.interaction_distance = k-1;
-    base_m{k}.model_name = ['logreg_t' num2str(k-1)];
-end
-base_m{end+1} = default_model('nearest neighbors');
+% for k = 1:5
+%     base_m{k} = default_model('logistic regression');
+%     base_m{k}.interaction_distance = k-1;
+%     base_m{k}.model_name = ['logreg_t' num2str(k-1)];
+% end
+% base_m{end+1} = default_model('nearest neighbors');
 base_m{end+1} = default_model('RF');
 
 
