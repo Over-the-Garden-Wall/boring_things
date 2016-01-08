@@ -9,7 +9,7 @@ function m = fit_RF(m, data, labels)
 %     end
     num_samples = size(data,1);
 
-    num_forests = ceil(num_samples/max_samples_per_forest);
+    num_forests = ceil(num_samples/m.max_samples_per_forest);
     samps_per_forest = round(num_samples/num_forests);
     rand_list = randperm(num_samples);
 

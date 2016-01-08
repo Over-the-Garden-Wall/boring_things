@@ -27,9 +27,9 @@ function evt_data = read_and_clean_data_for_evt(time_range, input_length)
             evt_data.ret((t-1) * num_events + n,:) = ...
                 raw_data.ret(evt_r(n), evt_c(n) + time_range(t) + ...
                 (-input_length:-1));
-            evt_data.label((t-1) * num_events + n) = raw_data.ret(evt_r(n), evt_c(n) + time_range(t));
+            evt_data.label = raw_data.ret(evt_r(n), evt_c(n) + time_range(t));
         end
-        evt_data.t((t-1) * num_events + (1:num_events)) = time_range(t);
+        evt_data.t((t-1) * num_events + 1:num_events) = t;
     end
     evt_data.label = sign(evt_data.label);
     
@@ -37,14 +37,6 @@ function evt_data = read_and_clean_data_for_evt(time_range, input_length)
     
     
     evt_data.ret(isnan(evt_data.ret)) = 0;
-    
-    to_remove = isnan(evt_data.label) | evt_data.label == 0;
-    
-    evt_data.ret(to_remove,:) = [];
-    evt_data.label(to_remove,:) = [];
-    evt_data.t(to_remove) = [];
-    evt_data.clf(to_remove) = [];
-    
     
 end
         
