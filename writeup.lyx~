@@ -278,31 +278,26 @@ lly invariant, or position indifferent.
 
 , since the patterns in the data preceding those times may be completely
  different.
- As such, I fit a separate model of each considered type for each time 
-\begin_inset Formula $t$
+ As such, I build
+\end_layout
+
+\begin_layout Subsubsection*
+Fixed-length Input
+\end_layout
+
+\begin_layout Standard
+The motivation for this choice is that, at 
+\begin_inset Formula $t<5$
 \end_inset
 
- in range of 
-\begin_inset Formula $[-20\;10]$
-\end_inset
-
-.
+ it provides a full field of view for all the points during which the event
+ could be anticipated with some additional context prior, without being
+ so long as to make model fitting overly burdensome.
+ 
 \end_layout
 
 \begin_layout Subsection*
 Methodology
-\end_layout
-
-\begin_layout Subsubsection*
-Training and Generalization sets
-\end_layout
-
-\begin_layout Standard
-I fit each model at each time relative to event onset with 
-\begin_inset Formula $75\%$
-\end_inset
-
- of the 
 \end_layout
 
 \end_body

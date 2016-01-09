@@ -14,12 +14,16 @@ base_m{end+1} = default_model('RF');
 held_out_ratio = .75;
 num_sims = 20;
 t_range = -20:10;
+input_length = 25;
+
+data = read_and_clean_data_for_evt(-20:10, input_length);
+
 inference_accuracy = zeros(num_sims, length(base_m));
 fit_accuracy = zeros(num_sims, length(base_m));
 fit_models = cell(num_sims, length(base_m));
 
 
-for t = 1:length(t_range);
+for t = 30:length(t_range);
     input_samples = data.ret(data.t==t_range(t),:);
     labels = data.label(data.t==t_range(t));
     
