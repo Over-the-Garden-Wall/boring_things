@@ -35,18 +35,22 @@ function m = default_model(model_name)
         m.fit_fxn = @fit_nearest_neighbors;
         m.infer_fxn = @run_nearest_neighbors;
     elseif strcmp(model_name, 'RF')
-        m.ntree = 2000;
+        m.ntree = 2000;        
+        
+    elseif strcmp(model_name, 'large RF')                
+        m.max_samples_per_forest = 4000;
         
         m.fit_fxn = @fit_RF;
         m.infer_fxn = @run_RF;
-    elseif strcmp(model_name, 'RF nonlins')
-        m.ntree = 500;
-        m.forests_per_nlin = 10;
-        m.fxn_res = 200;
-        m.search_res = 20;
         
-        n.fit_fxn = @fit_RFnonlins;
-        n.infer_fxn = @run_RFnonlins;
+    elseif strcmp(model_name, 'RF nonlins')
+        m.ntree = 1000;
+        m.forests_per_nonlin = 1;
+        m.fxn_res = 100;
+        m.search_res = 40;
+        
+        m.fit_fxn = @fit_RFnonlins;
+        m.infer_fxn = @run_RFnonlins;
         
     elseif strcmp(model_name, 'logistic regression')        
         m.interaction_distance = 0;

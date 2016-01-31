@@ -17,6 +17,8 @@ function evt_data = read_and_clean_data_for_evt(time_range, input_length)
     num_events = length(evt_r);
     num_t = length(time_range);
     
+    
+    
     evt_data = [];
         
     evt_data.ret = zeros(num_events*num_t, input_length);
@@ -34,7 +36,7 @@ function evt_data = read_and_clean_data_for_evt(time_range, input_length)
     evt_data.label = sign(evt_data.label);
     
     evt_data.clf = repmat(raw_data.clf(evt_r,1), num_t, 1); %clf was in a silly format, now vector
-    
+    evt_data.mktcap = repmat(mean_nonan(raw_data.mktcap(evt_r,:)')', num_t, 1);
     
     evt_data.ret(isnan(evt_data.ret)) = 0;
     
@@ -44,6 +46,7 @@ function evt_data = read_and_clean_data_for_evt(time_range, input_length)
     evt_data.label(to_remove,:) = [];
     evt_data.t(to_remove) = [];
     evt_data.clf(to_remove) = [];
+    evt_data.mktcap(to_remove) = [];
     
     
 end

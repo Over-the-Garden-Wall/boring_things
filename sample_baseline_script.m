@@ -1,18 +1,19 @@
 %time searching script
 
 base_m = [];
-for k = 1:5
-    base_m{k} = default_model('logistic regression');
-    base_m{k}.interaction_distance = k-1;
-    base_m{k}.model_name = ['logreg_t' num2str(k-1)];
-end
-base_m{end+1} = default_model('nearest neighbors');
-base_m{end+1} = default_model('RF');
+% for k = 1:5
+%     base_m{k} = default_model('logistic regression');
+%     base_m{k}.interaction_distance = k-1;
+%     base_m{k}.model_name = ['logreg_t' num2str(k-1)];
+% end
+% base_m{end+1} = default_model('nearest neighbors');
+base_m{end+1} = default_model('large RF');
+% base_m{end+1} = default_model('RF');
 
 
 
 held_out_ratio = .75;
-num_sims = 20;
+num_sims = 50;
 input_length = 25;
 
 inference_accuracy = zeros(num_sims, length(base_m));
@@ -37,5 +38,5 @@ for s = 1:num_sims;
         
     end
 
-    save(['../data/baseline_all_models_s' num2str(t) '.mat'], '-v7.3', 'inference_accuracy', 'fit_accuracy', 'fit_models');
+    save(['../data/baseline_RF_s' num2str(s) '.mat'], '-v7.3', 'inference_accuracy', 'fit_accuracy', 'fit_models');
 end

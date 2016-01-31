@@ -35,12 +35,17 @@ function m = default_model(model_name)
         m.fit_fxn = @fit_nearest_neighbors;
         m.infer_fxn = @run_nearest_neighbors;
     elseif strcmp(model_name, 'RF')
-        m.ntree = 2000;
-        
-        m.max_samples_per_forest = 4000;
+        m.ntree = 2000;        
         
         m.fit_fxn = @fit_RF;
         m.infer_fxn = @run_RF;
+    elseif strcmp(model_name, 'large RF')                
+        m.max_samples_per_forest = 3500;
+        m.ntree = 1000;
+        
+        m.fit_fxn = @fit_large_RF;
+        m.infer_fxn = @run_large_RF;
+        
     elseif strcmp(model_name, 'RF nonlins')
         m.ntree = 1000;
         m.forests_per_nonlin = 1;
