@@ -7,6 +7,14 @@ function [inference_accuracy, fit_accuracy, m] = test_model_validity(base_m, sam
     is_invalid = any(isnan(labels),2);
     labels(is_invalid,:) = [];
 
+    if length(unique(labels)) <= 1
+        warning('not enough unique labels');
+        inference_accuracy = 0;
+        fit_accuracy = 0;
+        m = base_m;
+        return
+    end
+    
     samples(is_invalid,:) = [];
     samples(isnan(samples)) = 0;
 
@@ -18,15 +26,17 @@ function [inference_accuracy, fit_accuracy, m] = test_model_validity(base_m, sam
     
     
     for t = 1:num_sims
+        uni_training_label = 0;
+        while length(uni_training_label) <= 1
+            rand_list = randperm(num_total_samples);
 
-        rand_list = randperm(num_total_samples);
-       
-        for_training = rand_list(1:ceil(num_total_samples * proportion4training));
+            for_training = rand_list(1:ceil(num_total_samples * proportion4training));
+            training_label = labels(for_training,:);
+            
+            uni_training_label = unique(training_label);
+        end
         training_input = samples(for_training,:);
-        training_label = sign(labels(for_training,:));
-        training_input(training_label(:,1) == 0,:) = [];
-        training_label(training_label(:,1) == 0,:) = [];
-
+        
         m{t} = base_m;
         m{t} = m{t}.fit_fxn(m{t}, training_input, training_label);
 

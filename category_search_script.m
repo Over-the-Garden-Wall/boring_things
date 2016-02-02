@@ -11,24 +11,27 @@ models = [];
 %     base_m{k}.model_name = ['logreg_t' num2str(k-1)];
 % end
 % base_m{end+1} = default_model('nearest neighbors');
-% models{end+1} = default_model('logistic regression');
-models{end+1} = default_model('RF');
+models{end+1} = default_model('logistic regression');
+% models{end+1} = default_model('RF');
 
-
-categories = [];
-cap_vals = [0 400 1360 4700 Inf];
-for t = -20:20
-    for k = 1:4
-        categories{end+1} = eval(['@(x) (x.mktcap > ' num2str(cap_vals(k)) ' & x.mktcap < ' num2str(cap_vals(k+1)) ' & x.evt == ' num2str(t) ')']);
-    end
-    categories{end+1} = eval(['@(x) (x.evt == ' num2str(t) ')']);
-end
 
 data = read_and_clean_data(input_length);
 is_invalid = data.bin_label == 0;
 fns = fieldnames(data);
 for k = 1:length(fns)
     data.(fns{k})(is_invalid,:) = [];
+end
+
+
+categories = [];
+cap_vals = [0 400 1360 4700 Inf];
+clfs = unique(data.clf(:));
+for t = -20:20
+    for k = 1:length(clfs)
+%         categories{end+1} = eval(['@(x) (x.mktcap > ' num2str(cap_vals(k)) ' & x.mktcap < ' num2str(cap_vals(k+1)) ' & x.evt == ' num2str(t) ')']);
+        categories{end+1} = eval(['@(x) (x.clf == ' num2str(clfs(k)) ' & x.evt == ' num2str(t) ')']);
+    end
+    categories{end+1} = eval(['@(x) (x.evt == ' num2str(t) ')']);
 end
 
 tv = zeros(length(categories),1);

@@ -7,6 +7,10 @@ function m = fit_logistic_regress(m, data, labels)
     
     data = data(is_valid, :);
     
+    ignored = max(0, size(data,2) - size(data,1) + 1);
+    if ignored > 0
+        data = data(:,ignored+1:end);
+    end
     
     if m.interaction_distance ~= 0
         interaction_data = zeros(size(data)); 
@@ -23,5 +27,5 @@ function m = fit_logistic_regress(m, data, labels)
     end
     
     [m.B, m.dev, m.stats] = mnrfit(data, labels);
-    
+    m.B = [m.B(1); zeros(ignored,1); m.B(2:end)];
 end
