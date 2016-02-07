@@ -1,6 +1,6 @@
 
 held_out_ratio = .75;
-num_sims = 5;
+num_sims = 10;
 
 input_length = 25;
 
@@ -11,8 +11,8 @@ models = [];
 %     base_m{k}.model_name = ['logreg_t' num2str(k-1)];
 % end
 % base_m{end+1} = default_model('nearest neighbors');
-models{end+1} = default_model('logistic regression');
-% models{end+1} = default_model('RF');
+% models{end+1} = default_model('logistic regression');
+models{end+1} = default_model('RF');
 
 
 data = read_and_clean_data(input_length);
@@ -27,18 +27,19 @@ categories = [];
 cap_vals = [0 400 1360 4700 Inf];
 clfs = unique(data.clf(:));
 for t = -20:20
-    for k = 1:length(clfs)
+%     for k = 1:length(clfs)
 %         categories{end+1} = eval(['@(x) (x.mktcap > ' num2str(cap_vals(k)) ' & x.mktcap < ' num2str(cap_vals(k+1)) ' & x.evt == ' num2str(t) ')']);
-        categories{end+1} = eval(['@(x) (x.clf == ' num2str(clfs(k)) ' & x.evt == ' num2str(t) ')']);
-    end
+%         categories{end+1} = eval(['@(x) (x.clf == ' num2str(clfs(k)) ' & x.evt == ' num2str(t) ')']);
+%     end
     categories{end+1} = eval(['@(x) (x.evt == ' num2str(t) ')']);
 end
+% categories{end+1} = eval(['@(x) (~isnan(x.evt))']);
 
 tv = zeros(length(categories),1);
 for c = 1:length(categories)
     my_cat = categories{c};
     is_valid = my_cat(data);
-    input_samples = data.input(is_valid,:);
+    input_samples = [data.input(is_valid,:) data.clf(is_valid) data.mktcap(is_valid)];
     labels = data.bin_label(is_valid);
     
     
@@ -55,6 +56,11 @@ for c = 1:length(categories)
         disp(mean(inference_accuracy));
         
         save(['../data/models/model_' num2str(round(100000*rand)) '.mat'], '-v7.3', 'inference_accuracy', 'fit_accuracy', 'fit_models', 'my_cat');
+        
+        warning('hack in place');
+        Bs = zeros(27,10);
+        for k = 1:length(fit_models); Bs(:,k) = fit_models{k}.forest.importance; end
+        figure; plot_means_and_std(1:size(Bs,1), mean(Bs, 2)+10, std(Bs,[], 2));
     end
     
 end

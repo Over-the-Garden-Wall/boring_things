@@ -1,6 +1,6 @@
 function [evt_accuracy, non_evt_accuracy, models] = test_baseline_model(base_model, num_fits, training_ratio)    
 
-    data = read_and_clean_data(25);
+    data = read_and_clean_data(2);
     all_non_evt = isnan(data.evt) & data.bin_label ~= 0;
 
     evt_vals = unique(data.evt(:))';
