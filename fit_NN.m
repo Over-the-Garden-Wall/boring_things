@@ -1,5 +1,6 @@
 function m = fit_NN(m, training_samples, labels)
     
+    
     training_labels = sign(labels);    
     
     m.layer_size(1) = size(training_samples,2);
@@ -10,8 +11,8 @@ function m = fit_NN(m, training_samples, labels)
         m.B = cell(m.num_layers,1);
     
         for l = 1:m.num_layers+1
-            m.W{l} = .1 * randn(m.layer_size(l), m.layer_size(l+1));
-            m.B{l} = .1 * randn(1, m.layer_size(l+1));
+            m.W{l} = randn(m.layer_size(l), m.layer_size(l+1));
+            m.B{l} = randn(1, m.layer_size(l+1));
         end
     end
     
@@ -32,8 +33,6 @@ function m = fit_NN(m, training_samples, labels)
         sample_list = randperm(size(training_samples,1));
         samples_picked = sample_list(1:m.minibatch_size);
         
-        
-        
         %forward pass
         Y{1} = training_samples(samples_picked,:);
         for l = 1:m.num_layers+1
@@ -52,12 +51,10 @@ function m = fit_NN(m, training_samples, labels)
         end
         
         
-        
-        
         %gradient pass
         for l = 1:m.num_layers+1
-            m.W{l} = m.W{l} - dEdW{l} * m.learning_rate / m.minibatch_size;
-            m.B{l} = m.B{l} - sum(dEdB{l},1) * m.learning_rate / m.minibatch_size;
+            m.W{l} = m.W{l} - dEdW{l} * m.Wlearning_rate / m.minibatch_size;
+            m.B{l} = m.B{l} - sum(dEdB{l},1) * m.Blearning_rate / m.minibatch_size;
         end
         
     end

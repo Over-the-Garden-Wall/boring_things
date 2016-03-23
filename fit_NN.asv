@@ -22,7 +22,7 @@ function m = fit_NN(m, training_samples, labels)
     dEdB = cell(m.num_layers+1,1);
     for l = 1:m.num_layers+1;
         dEdW{l} = zeros(size(m.W{l}));
-        dEdB{l} = zeros(m.minibatch_size, size(m.B{l}));
+        dEdB{l} = zeros(m.minibatch_size, size(m.B{l}, 2));
     end
     
     
@@ -31,7 +31,7 @@ function m = fit_NN(m, training_samples, labels)
         %picking without replacement to allow for batch training
         sample_list = randperm(size(training_samples,1));
         samples_picked = sample_list(1:m.minibatch_size);
-        
+        samples_picked = 1:4479;
         
         
         %forward pass
@@ -56,8 +56,8 @@ function m = fit_NN(m, training_samples, labels)
         
         %gradient pass
         for l = 1:m.num_layers+1
-            m.W{l} = m.W{l} - dEdW{l} * m.learning_rate;
-            m.B{l} = m.B{l} - sum(dEdB{l},1) * m.learning_rate;
+            m.W{l} = m.W{l} - dEdW{l} * m.Wlearning_rate / m.minibatch_size;
+            m.B{l} = m.B{l} - sum(dEdB{l},1) * m.Blearning_rate / m.minibatch_size;
         end
         
     end

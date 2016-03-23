@@ -11,7 +11,8 @@ function [evt_accuracy, non_evt_accuracy, models] = test_baseline_model(base_mod
     evt_accuracy = zeros(num_fits,length(evt_vals));
     
     
-    non_evt_inputs = data.input(all_non_evt,:);
+    non_evt_inputs = [data.mktcap(all_non_evt), data.input(all_non_evt,:)];
+    non_evt_inputs(isnan(non_evt_inputs)) = 0;
     non_evt_labels = data.bin_label(all_non_evt);    
     
     for n = 1:num_fits        
@@ -33,7 +34,10 @@ function [evt_accuracy, non_evt_accuracy, models] = test_baseline_model(base_mod
         for evt_t_n = 1:length(evt_vals)
             evt_t = evt_vals(evt_t_n);
             is_evt_t = data.evt == evt_t & data.bin_label ~= 0;
-            prediction = models{n}.infer_fxn(models{n}, data.input(is_evt_t, :));
+            evt_inputs = [data.mktcap(is_evt_t), data.input(is_evt_t, :)];
+            evt_inputs(isnan(evt_inputs)) = 0;
+            
+            prediction = models{n}.infer_fxn(models{n}, evt_inputs);
             evt_accuracy(n, evt_t_n) = mean(prediction == data.bin_label(is_evt_t));
 
         end

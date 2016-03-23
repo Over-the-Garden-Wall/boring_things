@@ -7,8 +7,9 @@ function m = fit_RF(m, data, labels)
 %         param_in{k*2 - 1} = param_names{k};
 %         param_in{k*2} = m.params.(param_names{k});
 %     end
-    
-        m.forest = classRF_train(data,labels,m.ntree);
+    p = [];
+    p.nodesize = ceil(size(data,1) / m.max_nodes * 2);
+    m.forest = classRF_train(data,labels,m.ntree, 0, p);
    
 end
     

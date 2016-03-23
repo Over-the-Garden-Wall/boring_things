@@ -5,9 +5,13 @@ function m = default_model(model_name)
         m.num_layers = 2;
         m.layer_size = [0 12 12 0];
         
-        m.learning_rate = .01;
+        m.binary_prediction = true;
         m.num_iterations = 10^7;
 
+        m.Wlearning_rate = .05;
+        m.Blearning_rate = .005;
+        
+        
         m.f = @(x) (tanh(x));
         m.df = @(y) (1 - y.^2);
                 
@@ -18,7 +22,7 @@ function m = default_model(model_name)
         
         m.minibatch_size = 20;
         
-        m.momentum = .8;
+        m.momentum = .9;
         
 %         m.fit_fxn = @fit_NN;
         m.fit_fxn = @fit_NN;
@@ -26,17 +30,33 @@ function m = default_model(model_name)
     elseif strcmp(model_name, 'NN logitinit')
         m = default_model('NN');
         m.layer_size(2) = 4;
-        m.learning_rate = .001;
+        m.Wlearning_rate = .02;
+        m.Blearning_rate = .001;
         m.minibatch_size = 100;
         m.num_iterations = 1000000;
         m.fit_fxn = @fit_NN_logit_init;
         m.infer_fxn = @run_NN;        
+    elseif strcmp(model_name, 'NN logit')
+        m = default_model('NN');
+        
+        m.f = @(x) (1./(1 + exp(-x)));
+        m.df = @(y) ((1 - y).*y);
+        m.Ef = @(y, t) (-log((t==-1) + t.*y));
+        m.dEf = @(y, t) ( -t./ ((t==-1) + t.*y) ); 
+        
+        
+        m.num_layers = 1;
+        m.layer_size = [0 12 0];
+        m.num_iterations = 4000;
+        m.logit_updates = 50;
+        m.fit_fxn = @fit_NN_logit;
+        m.infer_fxn = @run_NN_logit;        
     elseif strcmp(model_name, 'nearest neighbors')
         m.fit_fxn = @fit_nearest_neighbors;
         m.infer_fxn = @run_nearest_neighbors;
     elseif strcmp(model_name, 'RF')
         m.ntree = 2000;        
-        
+        m.max_nodes = 2000;
         m.fit_fxn = @fit_RF;
         m.infer_fxn = @run_RF;
     elseif strcmp(model_name, 'large RF')                
